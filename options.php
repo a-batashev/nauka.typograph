@@ -1,37 +1,34 @@
-<?php
+<?
 if (!$USER->IsAdmin()) { return; }
 
 IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/options.php");
 IncludeModuleLangFile(__FILE__);
 
-if ($REQUEST_METHOD == "POST" && strlen($Update) > 0 && check_bitrix_sessid()) {
-	$auto_typograph_iblocks = array();
-	if (is_array($_POST["auto_typograph_iblocks"])) {
-		// Clean $_POST["auto_typograph_iblocks"]
-		$auto_typograph_iblocks = array_filter($_POST["auto_typograph_iblocks"], function($id) { return ($id == intval($id) && $id > 0); });
-	};
-	
-	// Set option
+// Save IBlocks list from $_POST
+if (is_array($_POST["auto_typograph_iblocks"]) && strlen($Update) > 0 && check_bitrix_sessid()) {
+	// Sanitize $_POST["auto_typograph_iblocks"]
+	$auto_typograph_iblocks = array_filter($_POST["auto_typograph_iblocks"], function($id) { return ($id == intval($id) && $id > 0); });
 	COption::SetOptionString("nauka.typograph", "auto_typograph_iblocks", serialize($auto_typograph_iblocks), false);
-};
+}
 
 if (CModule::IncludeModule("iblock")) {
 	// Get IBlocks
 	$resIBlock = CIBlock::GetList(array('ID' => 'ASC'), array('ACTIVE' => 'Y'));
 	while ($arIBlock = $resIBlock->Fetch()) {
 		$arIBlocksByType[$arIBlock["IBLOCK_TYPE_ID"]][$arIBlock["ID"]] = $arIBlock["NAME"];
-	};
+	}
 	
 	// Get names for IBlock types
 	foreach (array_keys($arIBlocksByType) as $type) {
 		if ($arIBTypeName = CIBlockType::GetByIDLang($type, LANG))
 			$arIBTypeNames[$type] = htmlspecialcharsex($arIBTypeName["NAME"]);
-	};
-};
+	}
+}
 
 $auto_typograph_iblocks = unserialize(COption::GetOptionString("nauka.typograph", "auto_typograph_iblocks"));
-if (!is_array($auto_typograph_iblocks))
+if (!is_array($auto_typograph_iblocks)) {
 	$auto_typograph_iblocks = array();
+}
 
 $aTabs = array(
 	array("DIV" => "edit1", "TAB" => GetMessage("MAIN_TAB_SET"), "ICON" => "", "TITLE" => GetMessage("MAIN_TAB_TITLE_SET"))
@@ -60,7 +57,6 @@ $tabControl->Begin();?>
 			</select>
 		</td>
 	</tr>
-	
 <?$tabControl->Buttons();?>
 	<input type="submit" name="Update" value="<?=GetMessage("MAIN_SAVE")?>" title="<?=GetMessage("MAIN_OPT_SAVE_TITLE")?>" class="adm-btn-save" />
 	<?=bitrix_sessid_post();?>
@@ -70,7 +66,12 @@ $tabControl->Begin();?>
 
 <?
 $aTabs = array(
-	array("DIV" => "edit21", "TAB" => GetMessage("NAUKA_TYPOGRAPH_OPTIONS_APPLY_TO_IBLOCKS_TITLE"), "ICON" => "", "TITLE" => GetMessage("NAUKA_TYPOGRAPH_OPTIONS_APPLY_TO_IBLOCKS")),
+	array(
+		"DIV" => "edit21",
+		"TAB" => GetMessage("NAUKA_TYPOGRAPH_OPTIONS_APPLY_TO_IBLOCKS_TITLE"),
+		"ICON" => "",
+		"TITLE" => GetMessage("NAUKA_TYPOGRAPH_OPTIONS_APPLY_TO_IBLOCKS")
+	),
 );
 $tabControl = new CAdminTabControl("tabControl2", $aTabs);
 $tabControl->Begin();
@@ -261,4 +262,4 @@ $tabControl->BeginNextTab();
 		</script>
 	</td>
 </tr>
-<?php $tabControl->End();?>
+<?$tabControl->End();?>

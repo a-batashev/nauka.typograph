@@ -1,4 +1,4 @@
-<?php require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admin_before.php");
+<?require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admin_before.php");
 
 if (!$USER->IsAdmin())
 	return;
@@ -11,7 +11,7 @@ if (CModule::IncludeModule("iblock")) {
 	// Typograph elements of the selected iblocks
 	if (is_array($_POST["auto_typograph_iblocks"])) {
 		
-		// Clean $_POST["auto_typograph_iblocks"]
+		// Sanitize $_POST["auto_typograph_iblocks"]
 		$auto_typograph_iblocks = array_filter($_POST["auto_typograph_iblocks"], function($id) { return ($id == intval($id) && $id > 0); });
 		
 		if ($auto_typograph_iblocks ) {
@@ -26,13 +26,12 @@ if (CModule::IncludeModule("iblock")) {
 			);
 			while ($arElement = $resElement->Fetch()) {
 				$arUpdateElements[] = $arElement;
-			};
+			}
 			$elements_total = count($arUpdateElements);
 			
 			if ($elements_total === 0) {
 				echo json_encode(array("LAST_ID" => -1));
-			}
-			elseif ($elements_total > 0 && CModule::IncludeModule("nauka.typograph")) {
+			} elseif ($elements_total > 0 && CModule::IncludeModule("nauka.typograph")) {
 				$el = new CIBlockElement;
 				
 				$endTime = time() + 3;
@@ -43,43 +42,42 @@ if (CModule::IncludeModule("iblock")) {
 						if ($TEXT != $arUpdateElement[$FIELD]) {
 							$arFields[$FIELD] = $TEXT;
 							$arFields[$FIELD ."_TYPE"] = "html";
-						};
-					};
+						}
+					}
 					if ($arFields) {
 						if ($el->Update($arUpdateElement["ID"], $arFields, false, false)) {
 							$elements_updated++;
-						}
-						else {
+						} else {
 							$result["LAST_ERROR"][] = array("ID" => $arUpdateElement["ID"], "ERROR_TEXT" => $el->LAST_ERROR);
-						};
-					}
-					else {
+						}
+					} else {
 						$elements_updated++;
-					};
+					}
 					
 					$newLastID = $arUpdateElement["ID"];
 					if (time() > $endTime) {
 						$bTimeout = true;
 						break;
-					};
-				};
+					}
+				}
 				
-				if (!$bTimeout)
+				if (!$bTimeout) {
 					$newLastID = -1;
+				}
 				
 				$result["LAST_ID"] = $newLastID;
 				$result["UPDATED"] = $elements_updated;
 				
-				if ($lastID === 0)
+				if ($lastID === 0) {
 					$result["TOTAL"] = $elements_total;
+				}
 				echo json_encode($result);
 				
-			};
+			}
 			
-		};
+		}
 		
 		
-	};
+	}
 	
-};
-?>
+}

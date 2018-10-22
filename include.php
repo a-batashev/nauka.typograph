@@ -1,4 +1,4 @@
-<?php
+<?
 global $MESS, $DOCUMENT_ROOT;
 
 CModule::AddAutoloadClasses('nauka.typograph', array('EMTypograph' => 'lib/EMT.php'));
@@ -24,9 +24,9 @@ class CNaukaTypograph {
 					$TEXT = self::fastApply($arFields[$FIELD]);
 					$arFields[$FIELD] = $TEXT;
 					$arFields[$FIELD . "_TYPE"] = 'html';
-				};
-			};
-		};
+				}
+			}
+		}
 	}
 
 	public static function fastApply($text, $options = array()) {
@@ -36,7 +36,7 @@ class CNaukaTypograph {
 			|| strpos($text, ';base64,') !== false // Typograph hangs on base64 images, so exclude it
 		) {
 			return $text;
-		};
+		}
 		
 		// Options by default
 		if (!is_array($options) || $options === array()) {
@@ -46,13 +46,14 @@ class CNaukaTypograph {
 				//'Symbol.arrows_symbols' => 'off', // Disable "Arrows to symbols"
 				//'Number.thinsp_between_number_triads' => 'off', // Disable "Numbers triads delimiters"
 			);
-		};
+		}
 		
 		$typograph = new EMTypograph();
 		$new_text = $typograph->fast_apply($text, $options);
 		
-		if ($new_text == '')
+		if ($new_text == '') {
 			$new_text = $text;
+		}
 		
 		return $new_text;
 	}
