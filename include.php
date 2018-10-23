@@ -1,4 +1,4 @@
-<?
+<?php
 global $MESS, $DOCUMENT_ROOT;
 
 CModule::AddAutoloadClasses('nauka.typograph', array('EMTypograph' => 'lib/EMT.php'));
@@ -18,27 +18,36 @@ class CNaukaTypograph {
 
 	function OnBeforeIBlockElementAddOrUpdateHandler(&$arFields) {
 		$auto_typograph_iblocks = unserialize(COption::GetOptionString("nauka.typograph", "auto_typograph_iblocks"));
-		if (in_array($arFields["IBLOCK_ID"], $auto_typograph_iblocks)) {
-			if (CModule::IncludeModule('nauka.typograph')) {
-				$arFields["NAME"] = self::fastApply(
-					$arFields["NAME"], 
-					array(
-						'OptAlign.all' => 'off', 
-						'Text.paragraphs' => 'off', 
-						'Nobr.spaces_nobr_in_surname_abbr' => 'off', 
-						'Etc.unicode_convert' => 'on', 
-					)
-				);
-				foreach (array("PREVIEW_TEXT", "DETAIL_TEXT") as $FIELD) {
-					$TEXT = self::fastApply($arFields[$FIELD]);
-					$arFields[$FIELD] = $TEXT;
-					$arFields["{$FIELD}_TYPE"] = 'html';
-				}
+		if (in_array($arFields["IBLOCK_ID"], $auto_typograph_iblocks) && CModule::IncludeModule('nauka.typograph')) {
+			$arFields["NAME"] = self::fastApply(
+				$arFields["NAME"],
+				array(
+					'OptAlign.all' => 'off',
+					'Text.paragraphs' => 'off',
+					'Nobr.spaces_nobr_in_surname_abbr' => 'off',
+					'Etc.unicode_convert' => 'on',
+				)
+			);
+			foreach (array("PREVIEW_TEXT", "DETAIL_TEXT") as $FIELD) {
+				$TEXT = self::fastApply($arFields[$FIELD]);
+				$arFields[$FIELD] = $TEXT;
+				$arFields["{$FIELD}_TYPE"] = 'html';
 			}
 		}
 	}
 
+	/**
+	* Wrapper for EMTypograph::fast_apply()
+	*
+	* Set excludes and options by default
+	*
+	* @param string $text
+	* @param array $options
+	* @return string
+	*/
 	public static function fastApply($text, $options = array()) {
+
+		// Excludes
 		if (
 			$text == ''
 			|| strpos($text, '<!--askaron.include') !== false // Fix for Askaron Include Module
@@ -46,7 +55,7 @@ class CNaukaTypograph {
 		) {
 			return $text;
 		}
-		
+
 		// Options by default
 		if (!is_array($options) || $options === array()) {
 			$options = array(
@@ -56,16 +65,15 @@ class CNaukaTypograph {
 				//'Number.thinsp_between_number_triads' => 'off', // Disable "Numbers triads delimiters"
 			);
 		}
-		
+
 		$typograph = new EMTypograph();
 		$new_text = $typograph->fast_apply($text, $options);
-		
+
 		if ($new_text == '') {
 			$new_text = $text;
 		}
-		
+
 		return $new_text;
 	}
 
 }
-?>

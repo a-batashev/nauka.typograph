@@ -3,7 +3,7 @@ if (!$USER->IsAdmin()) {
 	return;
 }
 
-IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/options.php");
+IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/options.php");
 IncludeModuleLangFile(__FILE__);
 
 // Save IBlocks list from $_POST
