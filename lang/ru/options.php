@@ -1,5 +1,5 @@
 <?php
-$MESS['NAUKA_TYPOGRAPH_OPTIONS_AUTOIBLOCKS'] = 'Автоматически типографировать анонс и подробный текст при добавлении и изменении элементов в выбранных инфоблоках';
+$MESS['NAUKA_TYPOGRAPH_OPTIONS_AUTOIBLOCKS'] = 'Автоматически типографировать название, анонс и подробный текст при добавлении и изменении элементов в выбранных инфоблоках';
 $MESS['NAUKA_TYPOGRAPH_OPTIONS_APPLY_TO_IBLOCKS_TITLE'] = 'Массовая обработка';
 $MESS['NAUKA_TYPOGRAPH_OPTIONS_APPLY_TO_IBLOCKS'] = 'Применить типограф ко всем элементам выбранных инфоблоков';
 $MESS['NAUKA_TYPOGRAPH_OPTIONS_ERROR'] = 'Ошибка';

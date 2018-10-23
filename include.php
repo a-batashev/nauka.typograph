@@ -20,10 +20,19 @@ class CNaukaTypograph {
 		$auto_typograph_iblocks = unserialize(COption::GetOptionString("nauka.typograph", "auto_typograph_iblocks"));
 		if (in_array($arFields["IBLOCK_ID"], $auto_typograph_iblocks)) {
 			if (CModule::IncludeModule('nauka.typograph')) {
+				$arFields["NAME"] = self::fastApply(
+					$arFields["NAME"], 
+					array(
+						'OptAlign.all' => 'off', 
+						'Text.paragraphs' => 'off', 
+						'Nobr.spaces_nobr_in_surname_abbr' => 'off', 
+						'Etc.unicode_convert' => 'on', 
+					)
+				);
 				foreach (array("PREVIEW_TEXT", "DETAIL_TEXT") as $FIELD) {
 					$TEXT = self::fastApply($arFields[$FIELD]);
 					$arFields[$FIELD] = $TEXT;
-					$arFields[$FIELD . "_TYPE"] = 'html';
+					$arFields["{$FIELD}_TYPE"] = 'html';
 				}
 			}
 		}

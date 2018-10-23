@@ -1,7 +1,8 @@
 <?require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admin_before.php");
 
-if (!$USER->IsAdmin())
+if (!$USER->IsAdmin()) {
 	return;
+}
 
 // Fatal errors only
 error_reporting(E_ERROR);
@@ -18,11 +19,11 @@ if (CModule::IncludeModule("iblock")) {
 			
 			$lastID = intval($_POST["lastID"]);
 			$resElement = CIBlockElement::GetList(
-				array("ID" => "ASC"), 
-				array("IBLOCK_ID" => $auto_typograph_iblocks, ">ID" => $lastID), 
-				false, 
-				false, 
-				array("IBLOCK_ID", "ID", "PREVIEW_TEXT", "DETAIL_TEXT")
+				array("ID" => "ASC"),
+				array("IBLOCK_ID" => $auto_typograph_iblocks, ">ID" => $lastID),
+				false,
+				false,
+				array("IBLOCK_ID", "ID", "NAME", "PREVIEW_TEXT", "DETAIL_TEXT")
 			);
 			while ($arElement = $resElement->Fetch()) {
 				$arUpdateElements[] = $arElement;
@@ -37,11 +38,20 @@ if (CModule::IncludeModule("iblock")) {
 				$endTime = time() + 3;
 				foreach ($arUpdateElements as $arUpdateElement) {
 					$arFields = array();
+					$arFields["NAME"] = CNaukaTypograph::fastApply(
+						$arUpdateElement["NAME"],
+						array(
+							'OptAlign.all' => 'off',
+							'Text.paragraphs' => 'off',
+							'Nobr.spaces_nobr_in_surname_abbr' => 'off',
+							'Etc.unicode_convert' => 'on',
+						)
+					);
 					foreach (array("PREVIEW_TEXT", "DETAIL_TEXT") as $FIELD) {
 						$TEXT = CNaukaTypograph::fastApply($arUpdateElement[$FIELD]);
 						if ($TEXT != $arUpdateElement[$FIELD]) {
 							$arFields[$FIELD] = $TEXT;
-							$arFields[$FIELD ."_TYPE"] = "html";
+							$arFields["{$FIELD}_TYPE"] = "html";
 						}
 					}
 					if ($arFields) {
@@ -76,7 +86,6 @@ if (CModule::IncludeModule("iblock")) {
 			}
 			
 		}
-		
 		
 	}
 	

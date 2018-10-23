@@ -1,11 +1,13 @@
 <?
-if (!$USER->IsAdmin()) { return; }
+if (!$USER->IsAdmin()) {
+	return;
+}
 
 IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/options.php");
 IncludeModuleLangFile(__FILE__);
 
 // Save IBlocks list from $_POST
-if (is_array($_POST["auto_typograph_iblocks"]) && strlen($Update) > 0 && check_bitrix_sessid()) {
+if (strlen($Update) > 0 && check_bitrix_sessid() && is_array($_POST["auto_typograph_iblocks"])) {
 	// Sanitize $_POST["auto_typograph_iblocks"]
 	$auto_typograph_iblocks = array_filter($_POST["auto_typograph_iblocks"], function($id) { return ($id == intval($id) && $id > 0); });
 	COption::SetOptionString("nauka.typograph", "auto_typograph_iblocks", serialize($auto_typograph_iblocks), false);
