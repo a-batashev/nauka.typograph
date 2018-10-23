@@ -2029,7 +2029,7 @@ class EMT_Tret_Quote extends EMT_Tret
 
 	protected function inject_in($pos, $text, &$thetext)
 	{
-	    for($i=0;$i<strlen($text);$i++) $thetext[$pos+$i] = $text[$i];
+		$thetext = substr($thetext, 0, $pos) . $text . substr($thetext, $pos + strlen($text));
 	}
 	
 	protected function build_sub_quotations()
