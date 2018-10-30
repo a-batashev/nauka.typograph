@@ -1,22 +1,28 @@
 <?php
-global $MESS, $DOCUMENT_ROOT;
 
-CModule::AddAutoloadClasses('nauka.typograph', array('EMTypograph' => 'lib/EMT.php'));
+CModule::AddAutoloadClasses(
+	'nauka.typograph',
+	array('EMTypograph' => 'lib/EMT.php')
+);
 
-class CNaukaTypograph {
+class CNaukaTypograph
+{
 
-	function OnBeforeHTMLEditorScriptRunsHandler() {
+	function OnBeforeHTMLEditorScriptRunsHandler()
+	{
 		CJSCore::RegisterExt(
 			'nauka_typograph',
 			array(
 				'js' => '/bitrix/js/nauka.typograph/nauka_typograph.js',
+				'lang' => '/bitrix/modules/nauka.typograph/lang/ru/install/js/nauka_typograph.php',
 				'rel' => array('ajax')
 			)
 		);
 		CJSCore::Init('nauka_typograph');
 	}
 
-	function OnBeforeIBlockElementAddOrUpdateHandler(&$arFields) {
+	function OnBeforeIBlockElementAddOrUpdateHandler(&$arFields)
+	{
 		$auto_typograph_iblocks = unserialize(COption::GetOptionString("nauka.typograph", "auto_typograph_iblocks"));
 		if (in_array($arFields["IBLOCK_ID"], $auto_typograph_iblocks) && CModule::IncludeModule('nauka.typograph')) {
 			$arFields["NAME"] = self::fastApply(
@@ -45,8 +51,8 @@ class CNaukaTypograph {
 	* @param array $options
 	* @return string
 	*/
-	public static function fastApply($text, $options = array()) {
-
+	public static function fastApply($text, $options = array())
+	{
 		// Excludes
 		if (
 			$text == ''
@@ -55,7 +61,7 @@ class CNaukaTypograph {
 		) {
 			return $text;
 		}
-
+		
 		// Options by default
 		if (!is_array($options) || $options === array()) {
 			$options = array(
@@ -65,14 +71,14 @@ class CNaukaTypograph {
 				//'Number.thinsp_between_number_triads' => 'off', // Disable "Numbers triads delimiters"
 			);
 		}
-
+		
 		$typograph = new EMTypograph();
 		$new_text = $typograph->fast_apply($text, $options);
-
+		
 		if ($new_text == '') {
 			$new_text = $text;
 		}
-
+		
 		return $new_text;
 	}
 
