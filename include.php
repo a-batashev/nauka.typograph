@@ -24,7 +24,7 @@ class CNaukaTypograph
 	function OnBeforeIBlockElementAddOrUpdateHandler(&$arFields)
 	{
 		$auto_typograph_iblocks = unserialize(COption::GetOptionString("nauka.typograph", "auto_typograph_iblocks"));
-		if (in_array($arFields["IBLOCK_ID"], $auto_typograph_iblocks) && CModule::IncludeModule('nauka.typograph')) {
+		if (is_array($auto_typograph_iblocks) && in_array($arFields["IBLOCK_ID"], $auto_typograph_iblocks) && CModule::IncludeModule('nauka.typograph')) {
 			$arFields["NAME"] = self::fastApply(
 				$arFields["NAME"],
 				array(
