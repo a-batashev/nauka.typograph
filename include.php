@@ -8,7 +8,7 @@ CModule::AddAutoloadClasses(
 class CNaukaTypograph
 {
 
-	function OnBeforeHTMLEditorScriptRunsHandler()
+	public static function OnBeforeHTMLEditorScriptRunsHandler()
 	{
 		CJSCore::RegisterExt(
 			'nauka_typograph',
@@ -21,7 +21,7 @@ class CNaukaTypograph
 		CJSCore::Init('nauka_typograph');
 	}
 
-	function OnBeforeIBlockElementAddOrUpdateHandler(&$arFields)
+	public static function OnBeforeIBlockElementAddOrUpdateHandler(&$arFields)
 	{
 		$auto_typograph_iblocks = unserialize(COption::GetOptionString("nauka.typograph", "auto_typograph_iblocks"));
 		if (is_array($auto_typograph_iblocks) && in_array($arFields["IBLOCK_ID"], $auto_typograph_iblocks) && CModule::IncludeModule('nauka.typograph')) {
