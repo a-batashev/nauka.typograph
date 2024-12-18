@@ -2,12 +2,11 @@
 
 CModule::AddAutoloadClasses(
 	'nauka.typograph',
-	array('EMTypograph' => 'lib/EMT.php')
+	['EMTypograph' => 'lib/EMT.php']
 );
 
 class CNaukaTypograph
 {
-
 	public static function OnBeforeHTMLEditorScriptRunsHandler()
 	{
 		CJSCore::RegisterExt(
@@ -15,7 +14,7 @@ class CNaukaTypograph
 			array(
 				'js' => '/bitrix/js/nauka.typograph/nauka_typograph.js',
 				'lang' => '/bitrix/modules/nauka.typograph/lang/ru/install/js/nauka_typograph.php',
-				'rel' => array('ajax')
+				'rel' => ['ajax']
 			)
 		);
 		CJSCore::Init('nauka_typograph');
@@ -23,7 +22,7 @@ class CNaukaTypograph
 
 	public static function OnBeforeIBlockElementAddOrUpdateHandler(&$arFields)
 	{
-		$auto_typograph_iblocks = unserialize(COption::GetOptionString("nauka.typograph", "auto_typograph_iblocks"));
+		$auto_typograph_iblocks = unserialize(COption::GetOptionString('nauka.typograph', 'auto_typograph_iblocks'));
 		if (is_array($auto_typograph_iblocks) && in_array($arFields["IBLOCK_ID"], $auto_typograph_iblocks) && CModule::IncludeModule('nauka.typograph')) {
 			$arFields["NAME"] = self::fastApply(
 				$arFields["NAME"],
@@ -34,7 +33,7 @@ class CNaukaTypograph
 					'Etc.unicode_convert' => 'on',
 				)
 			);
-			foreach (array("PREVIEW_TEXT", "DETAIL_TEXT") as $FIELD) {
+			foreach (['PREVIEW_TEXT', 'DETAIL_TEXT'] as $FIELD) {
 				$TEXT = self::fastApply($arFields[$FIELD]);
 				$arFields[$FIELD] = $TEXT;
 				$arFields["{$FIELD}_TYPE"] = 'html';
@@ -51,7 +50,7 @@ class CNaukaTypograph
 	* @param array $options
 	* @return string
 	*/
-	public static function fastApply($text, $options = array())
+	public static function fastApply($text, $options = [])
 	{
 		// Excludes
 		if (
@@ -61,25 +60,25 @@ class CNaukaTypograph
 		) {
 			return $text;
 		}
-		
+
 		// Options by default
-		if (!is_array($options) || $options === array()) {
+		if (!is_array($options) || $options === []) {
 			$options = array(
 				'OptAlign.all'   => 'off', // Disable "Optical align"
 				'Text.breakline' => 'off', // Disable "Text auto-breakline"
 				//'Symbol.arrows_symbols' => 'off', // Disable "Arrows to symbols"
 				//'Number.thinsp_between_number_triads' => 'off', // Disable "Numbers triads delimiters"
+				'Number.numeric_sub' => 'off', // Disable "Numeric sub"
 			);
 		}
-		
+
 		$typograph = new EMTypograph();
 		$new_text = $typograph->fast_apply($text, $options);
-		
+
 		if ($new_text == '') {
 			$new_text = $text;
 		}
-		
+
 		return $new_text;
 	}
-
 }
